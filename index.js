@@ -13,37 +13,35 @@ let students = [
 ];
 
 const routeTracker = function(req, res, next){
-    // switch( req.method ){
-    //     case "GET":
-    //         if(req.body.id !== undefined){
-    //             app.locals.getStudentsID += 1;
-    //         }
-    //         if(req.body.section !== undefined){
-    //             app.locals.getStudentsSection += 1;
-    //         }
-    //         if(!req.body.id && !req.body.section){
-    //             app.locals.getStudents += 1;
-    //         }
-    //         break;
-    //     case "POST":
-    //         app.locals.postStudent += 1;
-    //         break;
-    //     case "PATCH":
-    //         app.locals.updateStudent += 1;
-    //         break;
-    //     case "DELETE":
-    //         app.locals.deleteStudent += 1;
-    //         break;
-    //     default:
-    //         console.log("NONE");
-    // }
+    switch( req.method ){
+        case "GET":
+            if(req.path.includes('id')){
+                app.locals.getStudentsID += 1;
+            }else if(req.path.includes('section')){
+                app.locals.getStudentsSection += 1;
+            }else {
+                app.locals.getStudents += 1;
+            }
+            break;
+        case "POST":
+            app.locals.postStudent += 1;
+            break;
+        case "PATCH":
+            app.locals.updateStudent += 1;
+            break;
+        case "DELETE":
+            app.locals.deleteStudent += 1;
+            break;
+        default:
+            console.log("NONE");
+    }
 
-    // console.log(`\nGET:            ${app.locals.getStudents}`);
-    // console.log(`GET by ID:      ${app.locals.getStudentsID}`);
-    // console.log(`GET by Section: ${app.locals.getStudentsSection}`);
-    // console.log(`POST:           ${app.locals.postStudent}`);
-    // console.log(`UPDATE:         ${app.locals.updateStudent}`);
-    // console.log(`DELETE:         ${app.locals.deleteStudent}`);
+    console.log(`\nGET:            ${app.locals.getStudents}`);
+    console.log(`GET by ID:      ${app.locals.getStudentsID}`);
+    console.log(`GET by Section: ${app.locals.getStudentsSection}`);
+    console.log(`POST:           ${app.locals.postStudent}`);
+    console.log(`UPDATE:         ${app.locals.updateStudent}`);
+    console.log(`DELETE:         ${app.locals.deleteStudent}`);
     next();
 }
 
@@ -62,9 +60,6 @@ app.get('/find-id/:student_id', routeTracker, (req,res)=>{
         let studentIndex = students.findIndex((s)=>{
             return s.id === studentId;
         });
-
-        console.log(studentId);
-        console.log(studentIndex);
 
         if(studentIndex >= 0){
             res.status(200).send(students[studentIndex]);
@@ -87,6 +82,7 @@ app.get('/find-section/:section', routeTracker, (req,res)=>{
                 return true;
             }
         });
+
         if(currentStudent){
             res.status(200).send(currentStudent);
         }else{
