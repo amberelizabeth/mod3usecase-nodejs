@@ -93,41 +93,54 @@ app.get('/find-section/:section', routeTracker, (req,res)=>{
             res.status(404).send('No student exists in this section.');
         }
     }else {
-        res.status(404).send('Invalid student section parameter.')
+        res.status(400).send('Invalid student section parameter.');
     }    
 });
 
 
 // UPDATE student by student ID parameter
 app.patch('/:student_id', routeTracker, (req,res)=>{
-    //get the student id from the url
     let studentId = parseInt(req.params.student_id);
 
-    //identify a student by getting their array index
-    let studentIndex = students.findIndex(function(s){
-        return s.id === studentId;
-    });
+    if(studentId){
+        let studentIndex = students.findIndex((s)=>{
+            return s.id === studentId;
+        });
 
-    let newName = req.body.name;
-    students[studentIndex].name = newName; //Updating the name property
-
-    res.status(200).send('/'); //Redirect to the GET route
+        if(studentIndex >= 0){
+            for(let i in req.body){
+                students[studentIndex][i] = req.body[i];
+            }
+            res.status(200).send(students[studentIndex]);
+        }else{
+            res.status(404).send('No student exists with this ID')
+        }
+    }else {
+        res.status(400).send('Invalid student id parameter.');
+    }
 });
 
 
 // DELETE student by student ID parameter
 app.delete('/:student_id', routeTracker, (req,res)=>{
-    //get the student id from the url
+
     let studentId = parseInt(req.params.student_id);
 
-    //identify a student by getting their array index
-    let studentIndex = students.findIndex((s)=>{
-        return s.id === studentId;
-    });
-    
-    students.splice(studentIndex, 1); //Deleting record
+    if(studentId){
+        let studentIndex = students.findIndex((s)=>{
+            return s.id === studentId;
+        });
+        
+        if(studentIndex >= 0){
+            students.splice(studentIndex, 1); //Deleting record
 
-    res.status(200).send(students); //send new list
+            res.status(200).send(students); //send new list
+        }else{
+            res.status(404).send('No student exists with this ID')
+        }
+    }else {
+        res.status(400).send('Invalid student id parameter.');
+    }
 });
 
 
@@ -145,6 +158,7 @@ app.post('/', routeTracker, (req,res)=>{
     res.status(200).send(student);
 });
 
+// Start Server
 app.listen(3000, ()=>{
     app.locals.getStudents = 0;
     app.locals.getStudentsID = 0;
